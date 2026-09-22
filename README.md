@@ -17,6 +17,7 @@
   <a href="https://pypi.org/project/scitex-repro/"><img src="https://img.shields.io/pypi/v/scitex-repro?label=pypi" alt="pypi"></a>
   <a href="https://pypi.org/project/scitex-repro/"><img src="https://img.shields.io/pypi/pyversions/scitex-repro?label=python" alt="python"></a>
   <a href="https://github.com/ywatanabe1989/scitex-repro/actions/workflows/rtd-sphinx-build-on-ubuntu-latest.yml"><img src="https://img.shields.io/github/actions/workflow/status/ywatanabe1989/scitex-repro/rtd-sphinx-build-on-ubuntu-latest.yml?branch=develop&label=docs" alt="docs"></a>
+  <a href="https://scitex-repro.readthedocs.io/en/latest/"><img src="https://img.shields.io/readthedocs/scitex-repro?label=docs" alt="docs"></a>
 </p>
 <p align="center">
   <a href="https://github.com/ywatanabe1989/scitex-repro/actions/workflows/pytest-matrix-on-ubuntu-py3-11-3-12-3-13.yml"><img src="https://img.shields.io/github/actions/workflow/status/ywatanabe1989/scitex-repro/pytest-matrix-on-ubuntu-py3-11-3-12-3-13.yml?branch=develop&label=tests" alt="tests"></a>
@@ -31,26 +32,72 @@
 
 | # | Problem | Solution |
 |---|---------|----------|
-| 1 | **"Seed everything" requires 5+ lines of boilerplate** — `random.seed()` + `np.random.seed()` + `torch.manual_seed()` + `torch.cuda.manual_seed_all()` + `tf.random.set_seed()` + `os.environ[PYTHONHASHSEED]` | **`RandomStateManager(seed=42)`** — one call seeds every framework detected in the env; `.reset()` rewinds mid-experiment |
-| 2 | **Experiment run directories collide** — two parallel runs overwrite each other | **`gen_ID()` + `hash_array()`** — unique directory names like `20260423_2155_abc12345`; deterministic array fingerprints for integrity checks |
+| 1 | **"Seed everything" takes 5+ lines** — `random` + `numpy` + `torch` (cpu+cuda) + `tensorflow` + `PYTHONHASHSEED` | **`RandomStateManager(seed=42)`** — one call seeds every framework detected in the env; `.reset()` rewinds mid-experiment |
+| 2 | **Run directories collide** — two parallel runs overwrite each other | `gen_ID()` + `hash_array()` — unique names like `20260423_2155_abc12345`; deterministic fingerprints for integrity checks |
+
+## Quick Start
+
+```python
+from scitex_repro import RandomStateManager, gen_ID, hash_array
+
+rng = RandomStateManager(seed=42)
+data = rng("data").random(100)
+print(gen_ID(), hash_array(data))
+```
+
+## Demo
+
+```mermaid
+flowchart LR
+    seed["seed=42"] --> rsm["RandomStateManager"]
+    rsm --> py["random"]
+    rsm --> np["numpy"]
+    rsm --> torch["torch (cpu+cuda)"]
+    rsm --> tf["tensorflow"]
+    rsm --> hashenv["PYTHONHASHSEED"]
+    rsm --> data["rng('data').random(100)"]
+    data --> fp["hash_array(data)"]
+    rsm --> id["gen_ID()"]
+    id --> dir[("20260423_2155_abc12345/")]
+    fp --> integrity[("array fingerprint")]
+```
+
+<p align="center"><sub><b>Figure 1.</b> Demo. One seed fans out to every framework; IDs and fingerprints track each run.</sub></p>
 
 ## Installation
 
 ```bash
-pip install scitex-repro
+uv pip install "scitex-repro[all]"
 ```
+
+<details>
+<summary><strong>Extras</strong></summary>
+
+| Extra | Enables |
+|-------|---------|
+| `all` | Every framework seed (`jax` + `tensorflow` + `torch`) |
+| `jax` | JAX seeding (`jax`, `jaxlib`) |
+| `tensorflow` | TensorFlow seeding (`tensorflow`) |
+| `torch` | PyTorch seeding (`torch`) |
+| `dev` | Test/lint tools (`pytest`, `ruff`, `scitex-dev`) |
+| `docs` | Sphinx build (`sphinx`, theme/parser extensions) |
+
+</details>
 
 ## Architecture
 
+```mermaid
+flowchart LR
+    SEED[seed=42] --> RSM[RandomStateManager]
+    RSM --> GENS[named generators]
+    GENS --> DATA[experiment data]
+    DATA --> VERIFY[verify: hash match?]
+    VERIFY -- yes --> OK[reproducible]
+    VERIFY -- no --> FAIL[ValueError]
+    RSM --> IDS[gen_ID / timestamps]
 ```
-src/scitex_repro/
-├── __init__.py              # public re-exports
-├── _RandomStateManager.py   # cross-framework RNG seeding (random / numpy / torch / tf)
-├── _gen_ID.py               # 20260423_2155_<hash> directory IDs
-├── _gen_timestamp.py        # filesystem-safe timestamps
-├── _hash_array.py           # deterministic NumPy / pandas fingerprints
-└── _config.py               # env-var + config defaults
-```
+
+<p align="center"><sub><b>Figure 2.</b> Architecture. Seeded generators produce data; verify() compares hashes against the cache.</sub></p>
 
 ## 1 Interfaces
 
@@ -74,33 +121,6 @@ fingerprint = hash_array(data)
 ```
 
 </details>
-
-## Demo
-
-```mermaid
-flowchart LR
-    seed["seed=42"] --> rsm["RandomStateManager"]
-    rsm --> py["random"]
-    rsm --> np["numpy"]
-    rsm --> torch["torch (cpu+cuda)"]
-    rsm --> tf["tensorflow"]
-    rsm --> hashenv["PYTHONHASHSEED"]
-    rsm --> data["rng('data').random(100)"]
-    data --> fp["hash_array(data)"]
-    rsm --> id["gen_ID()"]
-    id --> dir[("20260423_2155_abc12345/")]
-    fp --> integrity[("array fingerprint")]
-```
-
-## Quick Start
-
-```python
-from scitex_repro import RandomStateManager, gen_ID, hash_array
-
-rng = RandomStateManager(seed=42)
-data = rng("data").random(100)
-print(gen_ID(), hash_array(data))
-```
 
 ## Part of SciTeX
 

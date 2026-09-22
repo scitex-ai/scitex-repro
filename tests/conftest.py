@@ -28,6 +28,18 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 os.environ["COVERAGE_PROCESS_START"] = str(_PROJECT_ROOT / "pyproject.toml")
 os.environ["COVERAGE_FILE"] = str(_PROJECT_ROOT / ".coverage")
 
+# Log level for capture tests: scitex-logging defaults to WARN (dev shells
+# often export SCITEX_LOGGING_LEVEL=warning), so log.info lines would be
+# silent. INFO is needed so log output reaches capsys; setdefault keeps an
+# explicit value.
+os.environ.setdefault("SCITEX_LOGGING_LEVEL", "INFO")
+try:
+    import scitex_logging as _slogging
+
+    _slogging.set_level("INFO")
+except Exception:
+    pass
+
 
 def _ensure_subprocess_coverage_shim() -> None:
     """Drop an idempotent `.pth` file in site-packages that
