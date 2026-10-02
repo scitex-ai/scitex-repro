@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>scitex_repro._hash_array &mdash; SciTeX Repro v0.1.6</title>
+  <title>scitex_repro._hash_array &mdash; SciTeX Repro v0.1.8</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -13,7 +13,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=6e0256f3"></script>
+      <script src="../../_static/documentation_options.js?v=22607128"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -122,7 +122,7 @@
 <div class="viewcode-block" id="hash_array">
 <a class="viewcode-back" href="../../api/scitex_repro.html#scitex_repro.hash_array">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">hash_array</span><span class="p">(</span><span class="n">array_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate hash for array data.</span>
+<span class="w">    </span><span class="sd">"""Generate hash for array data.</span>
 
 <span class="sd">    Creates a deterministic hash for numpy arrays, useful for</span>
 <span class="sd">    verifying data integrity and reproducibility.</span>
@@ -145,7 +145,7 @@
 <span class="sd">    &gt;&gt;&gt; hash2 = hash_array(data)</span>
 <span class="sd">    &gt;&gt;&gt; hash1 == hash2</span>
 <span class="sd">    True</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">data_bytes</span> <span class="o">=</span> <span class="n">array_data</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">data_bytes</span><span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">16</span><span class="p">]</span></div>
 
