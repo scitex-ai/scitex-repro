@@ -14,3 +14,17 @@ audit:
       # (see skill leaf 02_package_11_ci-and-codecov.md). It must live
       # at the repo root for codecov.io to discover it.
       - codecov.yml
+  exemptions:
+    PS-231:
+      - path: .github/workflows/rtd-sphinx-build-on-ubuntu-latest.yml
+        line: 0
+        reason: >-
+          PS-231's own BLOCKER 2 holds here on measurement: the org
+          reusable is BUILD-ONLY while this leaf also PUBLISHES — on a
+          develop push it rebuilds the bundle then git add/commit/pushes
+          src/scitex_repro/_sphinx_html, which pyproject packages
+          wholesale so the bundle SHIPS INSIDE THE WHEEL. Converting to a
+          bare uses: would keep building and stop publishing (green CI,
+          frozen user docs, nothing saying so), and would drop the
+          sphinx-build -W PR gate the org build lacks. Re-evaluate if the
+          org reusable gains a publish step.

@@ -24,6 +24,7 @@ permissions:
 jobs:
   call:
     uses: scitex-ai/.github/.github/workflows/cla.yml@main
-    secrets: inherit
+    secrets:
+      GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
     with:
       owner_allowlist: "bot*,ywatanabe1989,LLEmacs"

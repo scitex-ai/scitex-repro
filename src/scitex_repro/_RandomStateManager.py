@@ -20,7 +20,7 @@ Main API:
 
 import hashlib
 import json
-import logging
+import scitex_logging as slogging
 import pickle
 from contextlib import contextmanager
 from pathlib import Path
@@ -28,7 +28,7 @@ from typing import Any
 
 from scitex_repro._config import get_paths
 
-logger = logging.getLogger(__name__)
+log = slogging.getLogger(__name__)
 
 # Global singleton instance
 _GLOBAL_INSTANCE = None
@@ -60,7 +60,7 @@ class RandomStateManager:
         self._jax_key = None  # Initialize to None, will be set if jax is available
 
         if verbose:
-            logger.info(f"RandomStateManager initialized with seed {seed}")
+            log.info(f"RandomStateManager initialized with seed {seed}")
 
         # Auto-fix all available seeds
         self._auto_fix_seeds(verbose=verbose)
@@ -115,7 +115,7 @@ class RandomStateManager:
             # Anything else (e.g. CUDA driver mismatch, broken install): log
             # at debug and skip. Auto-seed is best-effort — a misconfigured
             # ML runtime should never block @stx.session for non-ML users.
-            logger.debug(f"torch seed skipped: {type(e).__name__}: {e}")
+            log.debug(f"torch seed skipped: {type(e).__name__}: {e}")
 
         # TensorFlow
         try:
@@ -128,7 +128,7 @@ class RandomStateManager:
             # google.protobuf.runtime_version.VersionError: gencode/runtime
             #   protobuf mismatch — surfaced once, then swallowed so the
             #   rest of session.start can proceed.
-            logger.debug(f"tensorflow seed skipped: {type(e).__name__}: {e}")
+            log.debug(f"tensorflow seed skipped: {type(e).__name__}: {e}")
 
         # JAX (deferred import to avoid circular imports)
         try:
@@ -160,7 +160,7 @@ class RandomStateManager:
             pass
 
         if verbose and fixed_modules:
-            logger.info(f"Fixed random seeds for: {', '.join(fixed_modules)}")
+            log.info(f"Fixed random seeds for: {', '.join(fixed_modules)}")
 
     def get_np_generator(self, name: str):
         """
@@ -214,7 +214,7 @@ class RandomStateManager:
             NumPy random generator with deterministic seed
         """
         if verbose:
-            print(
+            log.warning(
                 f"Note: rng('{name}') is deprecated. Use rng.get_np_generator('{name}') instead."
             )
         return self.get_np_generator(name)
@@ -275,12 +275,12 @@ class RandomStateManager:
 
             matches = cached["hash"] == obj_hash
             if not matches and verbose:
-                print(f"WARNING: Reproducibility broken for '{name}'!")
-                print(f"   Expected: {cached['hash'][:16]}...")
-                print(f"   Got:      {obj_hash[:16]}...")
+                log.error(f"WARNING: Reproducibility broken for '{name}'!")
+                log.error(f"   Expected: {cached['hash'][:16]}...")
+                log.error(f"   Got:      {obj_hash[:16]}...")
                 raise ValueError(f"Reproducibility verification failed for '{name}'")
             elif matches and verbose:
-                print(f"OK: Reproducibility verified for '{name}'")
+                log.info(f"OK: Reproducibility verified for '{name}'")
 
             return matches
         else:
