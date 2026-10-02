@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "scitex-repro"
-version = "0.1.7"
+version = "0.1.8"
 description = "Reproducibility utilities (random state, timestamps, hashing)"
 readme = "README.md"
 license = "AGPL-3.0-only"
@@ -33,6 +33,7 @@ classifiers = [
 ]
 dependencies = [
     "numpy",
+    "scitex-logging>=0.2.2",
 ]
 
 [project.optional-dependencies]
@@ -52,7 +53,7 @@ dev = [
     "pytest",
     "pytest-cov",
     "ruff",
-    "scitex-dev>=0.11.7",
+    "scitex-dev>=0.62.2",
     "tensorflow",
     "torch",
 ]
@@ -90,6 +91,10 @@ packages = ["src/scitex_repro"]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 addopts = "-v --tb=short"
+markers = [
+    "smoke: fast CLI happy-path tests (<60s, runs on every PR)",
+    "e2e: end-to-end workflows against real subsystems (runs on every PR)",
+]
 
 [tool.coverage.run]
 parallel = true
@@ -108,5 +113,5 @@ ignore = ["E501"]
 library_dirs = ["src", "tests", "examples"]
 
 dependencies = [
-    "scitex-dev>=0.17.8",
+    "scitex-dev>=0.62.2",
 ]

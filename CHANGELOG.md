@@ -9,6 +9,17 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 - fix: resolve RNG state under `repro/runtime/rng` per local-state-directives convention (PR #15)
 
+## [0.1.8] — 2026-10-02
+
+- Replace removed `scitex.logging` calls with the standalone `scitex-logging`
+  package and keep verbose diagnostics behind the existing `verbose` flag.
+- Require the Logger 0.2.2 and Dev 0.62.2 baselines used by the current genuine
+  Python 3.11, 3.12 and 3.13 checks; later releases remain eligible.
+- Deliver freshly built documentation as a bounded artifact for content review
+  and an ordinary protected PR instead of a rejected direct push to develop.
+- Isolate release jobs, verify the CI executable/image, require full extras and
+  check source, wheel, sdist and installed runtime files before OIDC publication.
+
 ## [0.1.6] — 2026-05-17
 
 - Bump release version for workflow alignment.

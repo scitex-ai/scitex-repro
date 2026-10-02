@@ -6,13 +6,13 @@ Uses SCITEX_DIR env var or defaults to ~/.scitex/.
 
 from __future__ import annotations
 
-import logging
+import scitex_logging as slogging
 import os
 import shutil
 import warnings
 from pathlib import Path
 
-logger = logging.getLogger(__name__)
+log = slogging.getLogger(__name__)
 
 # Package short name: scitex-repro → repro (prefix-stripping rule, §2 of
 # 06_local-state-directories.md).
@@ -58,7 +58,7 @@ class _Paths:
                 DeprecationWarning,
                 stacklevel=3,
             )
-            logger.info("Migrated %s → %s", old, new)
+            log.info("Migrated %s → %s", old, new)
 
     # ── Public path properties ─────────────────────────────────────────
 
