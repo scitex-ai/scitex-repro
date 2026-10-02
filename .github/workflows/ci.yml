@@ -1,0 +1,53 @@
+name: ci
+
+# ============================================================================
+# CANONICAL scitex CI — thin org-reusable caller (the ONE per-repo shape).
+# Rendered for scitex-repro by `scitex-dev ecosystem ci-template apply`.
+#
+# Job bodies live ONCE, org-side, in scitex-ai/.github@main — a shared
+# workflow cannot drift per-repo (operator decision, 2026-07-21, superseding
+# the retired consolidated pr-ci.yml/release-ci.yml pair). This file carries
+# only triggers, concurrency, and thin `uses:` calls.
+#
+# These unchanged shared callers select their genuine hosted Ubuntu defaults.
+# The separate tag-release workflow explicitly selects CI_RUNS_ON and the SIF.
+# Only the matrix's declared Codecov secret is forwarded to package CI; the
+# original named-secret CLA caller remains in cla.yml.
+#
+# Required-status-check contexts (branch protection must reference these;
+# under workflow_call GitHub renders "<caller-job-id> / <reusable job name>"):
+#   pytest-matrix / pytest-matrix-on-ubuntu-py<X.YY>
+#   import-smoke / import-smoke-on-ubuntu-py3-12
+#   quality-audit / audit
+#   rtd-sphinx-build / docs-sphinx
+# ============================================================================
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+  schedule:
+    - cron: "0 17 * * *" # nightly 17:00 UTC (~02:00 JST), off-peak
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  # Cancel superseded PR runs; NEVER cancel post-merge/protected-branch runs
+  # (preserves the retired release-ci.yml coalescing semantic).
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  pytest-matrix:
+    uses: scitex-ai/.github/.github/workflows/pytest-matrix.yml@main
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  import-smoke:
+    uses: scitex-ai/.github/.github/workflows/import-smoke.yml@main
+
+  quality-audit:
+    uses: scitex-ai/.github/.github/workflows/quality-audit.yml@main
+
+  rtd-sphinx-build:
+    uses: scitex-ai/.github/.github/workflows/rtd-sphinx-build.yml@main

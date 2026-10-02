@@ -125,7 +125,7 @@ def test_different_seeds_produce_different_python_random_outputs():
 @_TORCH_REQUIRED
 def test_construction_seeds_torch_random_when_torch_is_available():
     # Arrange
-    import torch
+    torch = pytest.importorskip("torch")
     RandomStateManager(seed=42, verbose=False)
     t1 = torch.rand(5)
     RandomStateManager(seed=42, verbose=False)
@@ -649,7 +649,7 @@ def test_get_sklearn_random_state_differs_across_distinct_base_seeds():
 @_TORCH_REQUIRED
 def test_get_torch_generator_returns_a_torch_generator_instance():
     # Arrange
-    import torch
+    torch = pytest.importorskip("torch")
     mgr = RandomStateManager(seed=42, verbose=False)
     # Act
     gen = mgr.get_torch_generator("model")
@@ -660,7 +660,7 @@ def test_get_torch_generator_returns_a_torch_generator_instance():
 @_TORCH_REQUIRED
 def test_get_torch_generator_is_reproducible_for_same_name_and_seed():
     # Arrange
-    import torch
+    torch = pytest.importorskip("torch")
     mgr1 = RandomStateManager(seed=42, verbose=False)
     val1 = torch.randn(10, generator=mgr1.get_torch_generator("model"))
     mgr2 = RandomStateManager(seed=42, verbose=False)
@@ -673,7 +673,7 @@ def test_get_torch_generator_is_reproducible_for_same_name_and_seed():
 @_TORCH_REQUIRED
 def test_get_torch_generator_differs_across_distinct_names_in_one_manager():
     # Arrange
-    import torch
+    torch = pytest.importorskip("torch")
     mgr = RandomStateManager(seed=42, verbose=False)
     val1 = torch.randn(10, generator=mgr.get_torch_generator("model1"))
     # Act
@@ -948,7 +948,7 @@ def test_compute_hash_of_bool_returns_32_char_string():
 @_TORCH_REQUIRED
 def test_compute_hash_of_torch_tensor_returns_32_char_string():
     # Arrange
-    import torch
+    torch = pytest.importorskip("torch")
     mgr = RandomStateManager(seed=42, verbose=False)
     tensor = torch.tensor([1.0, 2.0, 3.0])
     # Act
@@ -1092,6 +1092,33 @@ def test_get_generator_alias_returns_same_object_as_get_np_generator():
     gen2 = mgr.get_np_generator("test")
     # Assert
     assert gen1 is gen2
+
+
+# ============================================================================
+# Optional-framework seeding — TensorFlow / JAX
+# ============================================================================
+
+
+def test_construction_seeds_tensorflow_random_when_tensorflow_is_available():
+    # Arrange
+    tf = pytest.importorskip("tensorflow")
+    RandomStateManager(seed=42, verbose=False)
+    t1 = tf.random.uniform([5])
+    RandomStateManager(seed=42, verbose=False)
+    # Act
+    t2 = tf.random.uniform([5])
+    # Assert
+    assert bool(tf.reduce_all(tf.equal(t1, t2)))
+
+
+def test_construction_derives_jax_key_from_seed_when_jax_is_available():
+    # Arrange
+    jax = pytest.importorskip("jax")
+    expected = jax.random.PRNGKey(42)
+    # Act
+    mgr = RandomStateManager(seed=42, verbose=False)
+    # Assert
+    assert bool((jax.numpy.asarray(mgr._jax_key) == jax.numpy.asarray(expected)).all())
 
 
 if __name__ == "__main__":
