@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>scitex_repro._gen_ID &mdash; SciTeX Repro v0.1.6</title>
+  <title>scitex_repro._gen_ID &mdash; SciTeX Repro v0.1.8</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -13,7 +13,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=6e0256f3"></script>
+      <script src="../../_static/documentation_options.js?v=22607128"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -111,7 +111,7 @@
   <h1>Source code for scitex_repro._gen_ID</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="c1"># Time-stamp: &quot;2024-11-07 17:53:38 (ywatanabe)&quot;</span>
+<span class="c1"># Time-stamp: "2024-11-07 17:53:38 (ywatanabe)"</span>
 <span class="c1"># Extracted from scitex-python/src/scitex/repro/_gen_ID.py</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">random</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_random</span>
@@ -121,8 +121,8 @@
 
 <div class="viewcode-block" id="gen_id">
 <a class="viewcode-back" href="../../api/scitex_repro.html#scitex_repro.gen_id">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">gen_id</span><span class="p">(</span><span class="n">time_format</span><span class="o">=</span><span class="s2">&quot;%YY-%mM-</span><span class="si">%d</span><span class="s2">D-%Hh%Mm%Ss&quot;</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">now_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a unique identifier with timestamp and random characters.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">gen_id</span><span class="p">(</span><span class="n">time_format</span><span class="o">=</span><span class="s2">"%YY-%mM-</span><span class="si">%d</span><span class="s2">D-%Hh%Mm%Ss"</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">now_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Generate a unique identifier with timestamp and random characters.</span>
 
 <span class="sd">    Creates a unique ID by combining a formatted timestamp with random</span>
 <span class="sd">    alphanumeric characters. Useful for creating unique experiment IDs,</span>
@@ -131,8 +131,8 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    time_format : str, optional</span>
-<span class="sd">        Format string for timestamp portion. Default is &quot;%YY-%mM-%dD-%Hh%Mm%Ss&quot;</span>
-<span class="sd">        which produces &quot;2025Y-05M-31D-12h30m45s&quot; format.</span>
+<span class="sd">        Format string for timestamp portion. Default is "%YY-%mM-%dD-%Hh%Mm%Ss"</span>
+<span class="sd">        which produces "2025Y-05M-31D-12h30m45s" format.</span>
 <span class="sd">    N : int, optional</span>
 <span class="sd">        Number of random characters to append. Default is 8.</span>
 <span class="sd">    now_fn : callable, optional</span>
@@ -144,29 +144,29 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    str</span>
-<span class="sd">        Unique identifier in format &quot;{timestamp}_{random_chars}&quot;</span>
+<span class="sd">        Unique identifier in format "{timestamp}_{random_chars}"</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; id1 = gen_id()</span>
 <span class="sd">    &gt;&gt;&gt; print(id1)</span>
-<span class="sd">    &#39;2025Y-05M-31D-12h30m45s_a3Bc9xY2&#39;</span>
+<span class="sd">    '2025Y-05M-31D-12h30m45s_a3Bc9xY2'</span>
 
-<span class="sd">    &gt;&gt;&gt; id2 = gen_id(time_format=&quot;%Y%m%d&quot;, N=4)</span>
+<span class="sd">    &gt;&gt;&gt; id2 = gen_id(time_format="%Y%m%d", N=4)</span>
 <span class="sd">    &gt;&gt;&gt; print(id2)</span>
-<span class="sd">    &#39;20250531_xY9a&#39;</span>
+<span class="sd">    '20250531_xY9a'</span>
 
 <span class="sd">    &gt;&gt;&gt; # For experiment tracking</span>
 <span class="sd">    &gt;&gt;&gt; exp_id = gen_id()</span>
-<span class="sd">    &gt;&gt;&gt; save_path = f&quot;results/experiment_{exp_id}.pkl&quot;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    &gt;&gt;&gt; save_path = f"results/experiment_{exp_id}.pkl"</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">now_fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">now_fn</span> <span class="o">=</span> <span class="n">_datetime</span><span class="o">.</span><span class="n">now</span>
     <span class="n">now_str</span> <span class="o">=</span> <span class="n">now_fn</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">time_format</span><span class="p">)</span>
-    <span class="n">rand_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+    <span class="n">rand_str</span> <span class="o">=</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
         <span class="p">[</span><span class="n">_random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">_string</span><span class="o">.</span><span class="n">ascii_letters</span> <span class="o">+</span> <span class="n">_string</span><span class="o">.</span><span class="n">digits</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
     <span class="p">)</span>
-    <span class="k">return</span> <span class="n">now_str</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">rand_str</span></div>
+    <span class="k">return</span> <span class="n">now_str</span> <span class="o">+</span> <span class="s2">"_"</span> <span class="o">+</span> <span class="n">rand_str</span></div>
 
 
 

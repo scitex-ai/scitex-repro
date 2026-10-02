@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>scitex_repro &mdash; SciTeX Repro v0.1.6</title>
+  <title>scitex_repro &mdash; SciTeX Repro v0.1.8</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=6e0256f3"></script>
+      <script src="../_static/documentation_options.js?v=22607128"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -127,9 +127,9 @@ run identifiers, or temporary file names.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>time_format</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Format string for timestamp portion. Default is “%YY-%mM-%dD-%Hh%Mm%Ss”
+<li><p><strong>time_format</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Format string for timestamp portion. Default is “%YY-%mM-%dD-%Hh%Mm%Ss”
 which produces “2025Y-05M-31D-12h30m45s” format.</p></li>
-<li><p><strong>N</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Number of random characters to append. Default is 8.</p></li>
+<li><p><strong>N</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Number of random characters to append. Default is 8.</p></li>
 <li><p><strong>now_fn</strong> (<em>callable</em><em>, </em><em>optional</em>) – Zero-argument callable returning a <cite>datetime</cite>-like object with
 <cite>.strftime()</cite>. Defaults to <cite>datetime.now</cite>. Injection point for
 deterministic tests — pass a fake that returns a fixed datetime
@@ -140,24 +140,24 @@ instead of mocking <cite>datetime</cite> globally.</p></li>
 <dd class="field-even"><p>Unique identifier in format “{timestamp}_{random_chars}”</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 <div class="admonition-examples admonition">
 <p class="admonition-title">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">id1</span> <span class="o">=</span> <span class="n">gen_id</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">id1</span><span class="p">)</span>
-<span class="go">&#39;2025Y-05M-31D-12h30m45s_a3Bc9xY2&#39;</span>
+<span class="go">'2025Y-05M-31D-12h30m45s_a3Bc9xY2'</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">id2</span> <span class="o">=</span> <span class="n">gen_id</span><span class="p">(</span><span class="n">time_format</span><span class="o">=</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">id2</span> <span class="o">=</span> <span class="n">gen_id</span><span class="p">(</span><span class="n">time_format</span><span class="o">=</span><span class="s2">"%Y%m</span><span class="si">%d</span><span class="s2">"</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">id2</span><span class="p">)</span>
-<span class="go">&#39;20250531_xY9a&#39;</span>
+<span class="go">'20250531_xY9a'</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># For experiment tracking</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">exp_id</span> <span class="o">=</span> <span class="n">gen_id</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">save_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;results/experiment_</span><span class="si">{</span><span class="n">exp_id</span><span class="si">}</span><span class="s2">.pkl&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">save_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"results/experiment_</span><span class="si">{</span><span class="n">exp_id</span><span class="si">}</span><span class="s2">.pkl"</span>
 </pre></div>
 </div>
 </div>
@@ -173,9 +173,9 @@ run identifiers, or temporary file names.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>time_format</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Format string for timestamp portion. Default is “%YY-%mM-%dD-%Hh%Mm%Ss”
+<li><p><strong>time_format</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Format string for timestamp portion. Default is “%YY-%mM-%dD-%Hh%Mm%Ss”
 which produces “2025Y-05M-31D-12h30m45s” format.</p></li>
-<li><p><strong>N</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Number of random characters to append. Default is 8.</p></li>
+<li><p><strong>N</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Number of random characters to append. Default is 8.</p></li>
 <li><p><strong>now_fn</strong> (<em>callable</em><em>, </em><em>optional</em>) – Zero-argument callable returning a <cite>datetime</cite>-like object with
 <cite>.strftime()</cite>. Defaults to <cite>datetime.now</cite>. Injection point for
 deterministic tests — pass a fake that returns a fixed datetime
@@ -186,24 +186,24 @@ instead of mocking <cite>datetime</cite> globally.</p></li>
 <dd class="field-even"><p>Unique identifier in format “{timestamp}_{random_chars}”</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 <div class="admonition-examples admonition">
 <p class="admonition-title">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">id1</span> <span class="o">=</span> <span class="n">gen_id</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">id1</span><span class="p">)</span>
-<span class="go">&#39;2025Y-05M-31D-12h30m45s_a3Bc9xY2&#39;</span>
+<span class="go">'2025Y-05M-31D-12h30m45s_a3Bc9xY2'</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">id2</span> <span class="o">=</span> <span class="n">gen_id</span><span class="p">(</span><span class="n">time_format</span><span class="o">=</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">id2</span> <span class="o">=</span> <span class="n">gen_id</span><span class="p">(</span><span class="n">time_format</span><span class="o">=</span><span class="s2">"%Y%m</span><span class="si">%d</span><span class="s2">"</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">id2</span><span class="p">)</span>
-<span class="go">&#39;20250531_xY9a&#39;</span>
+<span class="go">'20250531_xY9a'</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># For experiment tracking</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">exp_id</span> <span class="o">=</span> <span class="n">gen_id</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">save_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;results/experiment_</span><span class="si">{</span><span class="n">exp_id</span><span class="si">}</span><span class="s2">.pkl&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">save_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"results/experiment_</span><span class="si">{</span><span class="n">exp_id</span><span class="si">}</span><span class="s2">.pkl"</span>
 </pre></div>
 </div>
 </div>
@@ -226,19 +226,19 @@ instead of mocking <cite>datetime</cite> globally.</p>
 <dd class="field-even"><p>Timestamp string in format “YYYY-MMDD-HHMM”</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 <div class="admonition-examples admonition">
 <p class="admonition-title">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">timestamp</span> <span class="o">=</span> <span class="n">gen_timestamp</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
-<span class="go">&#39;2025-0531-1230&#39;</span>
+<span class="go">'2025-0531-1230'</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;experiment_</span><span class="si">{</span><span class="n">gen_timestamp</span><span class="p">()</span><span class="si">}</span><span class="s2">.csv&quot;</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"experiment_</span><span class="si">{</span><span class="n">gen_timestamp</span><span class="p">()</span><span class="si">}</span><span class="s2">.csv"</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-<span class="go">&#39;experiment_2025-0531-1230.csv&#39;</span>
+<span class="go">'experiment_2025-0531-1230.csv'</span>
 </pre></div>
 </div>
 </div>
@@ -261,19 +261,19 @@ instead of mocking <cite>datetime</cite> globally.</p>
 <dd class="field-even"><p>Timestamp string in format “YYYY-MMDD-HHMM”</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 <div class="admonition-examples admonition">
 <p class="admonition-title">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">timestamp</span> <span class="o">=</span> <span class="n">gen_timestamp</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
-<span class="go">&#39;2025-0531-1230&#39;</span>
+<span class="go">'2025-0531-1230'</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;experiment_</span><span class="si">{</span><span class="n">gen_timestamp</span><span class="p">()</span><span class="si">}</span><span class="s2">.csv&quot;</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"experiment_</span><span class="si">{</span><span class="n">gen_timestamp</span><span class="p">()</span><span class="si">}</span><span class="s2">.csv"</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-<span class="go">&#39;experiment_2025-0531-1230.csv&#39;</span>
+<span class="go">'experiment_2025-0531-1230.csv'</span>
 </pre></div>
 </div>
 </div>
@@ -293,7 +293,7 @@ verifying data integrity and reproducibility.</p>
 <dd class="field-even"><p>16-character hash string</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 <div class="admonition-examples admonition">
@@ -312,7 +312,7 @@ verifying data integrity and reproducibility.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="scitex_repro.RandomStateManager">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">scitex_repro.</span></span><span class="sig-name descname"><span class="pre">RandomStateManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">42</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_repro/_RandomStateManager.html#RandomStateManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_repro.RandomStateManager" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Simple, robust random state manager for scientific computing.</p>
 <div class="admonition-examples admonition">
 <p class="admonition-title">Examples</p>
@@ -320,10 +320,10 @@ verifying data integrity and reproducibility.</p>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Method 1: Direct usage</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rng</span> <span class="o">=</span> <span class="n">RandomStateManager</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">rng</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">rng</span><span class="p">(</span><span class="s2">"data"</span><span class="p">)</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Verify reproducibility</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">rng</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;my_data&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rng</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"my_data"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -345,7 +345,7 @@ verifying data integrity and reproducibility.</p>
 <dd><p>Get or create a named NumPy random generator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Generator name (e.g., “data”, “model”, “augment”)</p>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Generator name (e.g., “data”, “model”, “augment”)</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Independent NumPy random generator</p>
@@ -357,7 +357,7 @@ verifying data integrity and reproducibility.</p>
 <div class="admonition-examples admonition">
 <p class="admonition-title">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rng</span> <span class="o">=</span> <span class="n">RandomStateManager</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">gen</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">get_np_generator</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gen</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">get_np_generator</span><span class="p">(</span><span class="s2">"data"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">gen</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">perm</span> <span class="o">=</span> <span class="n">gen</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
 </pre></div>
@@ -374,8 +374,8 @@ Consider using get_np_generator() directly for clarity.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Generator name</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to show deprecation warning</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Generator name</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to show deprecation warning</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -399,22 +399,22 @@ Later calls: verifies object matches cached hash</p>
 <li><p><strong>obj</strong> (<em>Any</em>) – Object to verify (array, tensor, data, model weights, etc.)
 Supports: numpy arrays, torch tensors, tf tensors, jax arrays,
 lists, dicts, pandas dataframes, and basic types</p></li>
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Cache name. Auto-generated if not provided.</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Cache name. Auto-generated if not provided.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>True if matches cache (or first call), False if different</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)">bool</a></p>
 </dd>
 </dl>
 <div class="admonition-examples admonition">
 <p class="admonition-title">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">generate_data</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">rng</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;train_data&quot;</span><span class="p">)</span>  <span class="c1"># First run: caches</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rng</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"train_data"</span><span class="p">)</span>  <span class="c1"># First run: caches</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Next run:</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">rng</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;train_data&quot;</span><span class="p">)</span>  <span class="c1"># Verifies match</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rng</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"train_data"</span><span class="p">)</span>  <span class="c1"># Verifies match</span>
 </pre></div>
 </div>
 </div>
@@ -434,7 +434,7 @@ lists, dicts, pandas dataframes, and basic types</p></li>
 - Basic types (int, float, str, bool)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -464,13 +464,13 @@ lists, dicts, pandas dataframes, and basic types</p></li>
 <p>Scikit-learn uses integers for random_state parameter.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Generator name</p>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Generator name</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Random state integer for sklearn</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)">int</a></p>
 </dd>
 </dl>
 <div class="admonition-examples admonition">
@@ -479,7 +479,7 @@ lists, dicts, pandas dataframes, and basic types</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">X</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">random_state</span><span class="o">=</span><span class="n">rng</span><span class="o">.</span><span class="n">get_sklearn_random_state</span><span class="p">(</span><span class="s2">&quot;split&quot;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">random_state</span><span class="o">=</span><span class="n">rng</span><span class="o">.</span><span class="n">get_sklearn_random_state</span><span class="p">(</span><span class="s2">"split"</span><span class="p">)</span>
 <span class="gp">... </span><span class="p">)</span>
 </pre></div>
 </div>
@@ -492,7 +492,7 @@ lists, dicts, pandas dataframes, and basic types</p></li>
 <dd><p>Get or create a named PyTorch generator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Generator name</p>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Generator name</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>PyTorch generator with deterministic seed</p>
@@ -504,7 +504,7 @@ lists, dicts, pandas dataframes, and basic types</p></li>
 <div class="admonition-examples admonition">
 <p class="admonition-title">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rng</span> <span class="o">=</span> <span class="n">RandomStateManager</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">gen</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">get_torch_generator</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gen</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">get_torch_generator</span><span class="p">(</span><span class="s2">"model"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="n">gen</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -523,13 +523,13 @@ lists, dicts, pandas dataframes, and basic types</p></li>
 <dd><p>Clear verification cache files.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>patterns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Specific cache patterns to clear. If None, clears all.</p>
+<dd class="field-odd"><p><strong>patterns</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Specific cache patterns to clear. If None, clears all.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Number of cache files removed</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -542,7 +542,7 @@ lists, dicts, pandas dataframes, and basic types</p></li>
 <dd><p>Get or create the global RandomStateManager instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to print status messages (default: False)</p>
+<dd class="field-odd"><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to print status messages (default: False)</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Global instance</p>
@@ -555,7 +555,7 @@ lists, dicts, pandas dataframes, and basic types</p></li>
 <p class="admonition-title">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">scitex_repro</span><span class="w"> </span><span class="kn">import</span> <span class="n">get</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rng</span> <span class="o">=</span> <span class="n">get</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">rng</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">rng</span><span class="p">(</span><span class="s2">"data"</span><span class="p">)</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -568,8 +568,8 @@ lists, dicts, pandas dataframes, and basic types</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – New seed value</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to print status messages (default: False)</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – New seed value</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to print status messages (default: False)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
