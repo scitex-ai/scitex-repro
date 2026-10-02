@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "scitex-repro"
-version = "0.1.7"
+version = "0.1.8"
 description = "Reproducibility utilities (random state, timestamps, hashing)"
 readme = "README.md"
 license = "AGPL-3.0-only"
@@ -33,7 +33,7 @@ classifiers = [
 ]
 dependencies = [
     "numpy",
-    "scitex-logging",
+    "scitex-logging>=0.2.2",
 ]
 
 [project.optional-dependencies]
@@ -53,7 +53,7 @@ dev = [
     "pytest",
     "pytest-cov",
     "ruff",
-    "scitex-dev>=0.11.7",
+    "scitex-dev>=0.62.2",
     "tensorflow",
     "torch",
 ]
@@ -66,6 +66,8 @@ docs = [
 ]
 all = [
     "scitex-repro[jax]",
+    "scitex-repro[dev]",
+    "scitex-repro[docs]",
     "scitex-repro[tensorflow]",
     "scitex-repro[torch]",
 ]
@@ -111,5 +113,5 @@ ignore = ["E501"]
 library_dirs = ["src", "tests", "examples"]
 
 dependencies = [
-    "scitex-dev>=0.17.8",
+    "scitex-dev>=0.62.2",
 ]

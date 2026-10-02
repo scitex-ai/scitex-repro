@@ -25,6 +25,7 @@ import pytest
 )
 def test_audit_all_clean():
     # Arrange
+    pytest.importorskip("scitex_dev")
     from scitex_dev.testing import audit_all_for_package
     # Act
     result = audit_all_for_package("scitex-repro")

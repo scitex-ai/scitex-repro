@@ -35,7 +35,8 @@ name: release
 # bare-runner fallback.
 #
 # runs-on driven by repo Actions Variable CI_RUNS_ON; SIF + apptainer paths
-# come from SCITEX_CI_SIF / SCITEX_CI_APPTAINER (same as pytest-matrix).
+# come from SCITEX_CI_SIF / SCITEX_CI_APPTAINER as verified absolute paths.
+# The wrapper checks the reviewed executable and image digests before entry.
 #
 # Manual re-run: the workflow also accepts a `version` input via
 # workflow_dispatch so you can re-publish without re-tagging.
@@ -56,6 +57,7 @@ env:
 
 jobs:
   test:
+    timeout-minutes: 30
     runs-on: ${{ fromJSON(vars.CI_RUNS_ON || '["self-hosted","Linux","X64","scitex-ci"]') }}
     strategy:
       fail-fast: false
@@ -75,16 +77,27 @@ jobs:
         with:
           ref: ${{ steps.ver.outputs.version }}
           fetch-depth: 0
+          persist-credentials: false
       # SIF-based self-hosted test run — mirrors pytest-matrix exactly. No
       # setup-python (the bare Spartan node has no Python tool cache; that step
       # failed "version not found for this OS"); no apt fd-install (fd is baked
       # in the SIF). exec-in-sif.sh apptainer-execs the reused ci-cpu.sif and
-      # run-in-sif.sh layers THIS (tagged) checkout + [all,dev] into a writable
-      # target, then runs pytest. fail-loud on a missing SIF/shim.
+      # run-in-sif.sh installs THIS (tagged) checkout + [all,dev] into a fresh
+      # job-owned venv, then runs every original test with four workers.
       - name: Run tests in the reused CI SIF (apptainer exec — deps layered, not on the bare runner)
         run: bash .github/ci/exec-in-sif.sh run-in-sif.sh ${{ matrix.python-version }}
+      - name: Retain genuine test evidence, including failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-tests-py${{ matrix.python-version }}
+          path: |
+            ${{ runner.temp }}/repro-${{ github.job }}-${{ github.run_id }}-${{ github.run_attempt }}.*/junit.xml
+            ${{ runner.temp }}/repro-${{ github.job }}-${{ github.run_id }}-${{ github.run_attempt }}.*/coverage.xml
+          if-no-files-found: warn
 
   build:
+    timeout-minutes: 30
     needs: test
     runs-on: ${{ fromJSON(vars.CI_RUNS_ON || '["self-hosted","Linux","X64","scitex-ci"]') }}
     outputs:
@@ -103,9 +116,10 @@ jobs:
         with:
           ref: ${{ steps.ver.outputs.version }}
           fetch-depth: 0
+          persist-credentials: false
       # Build INSIDE the SIF (no setup-python on the bare Spartan node).
-      # build-in-sif.sh installs the `build` frontend into a writable --target
-      # inside the SIF, then `python -m build` → dist/. fail-loud on empty dist.
+      # Fresh job-owned tooling builds dist/, then verifies every runtime byte
+      # against both archives and a genuine full-extras wheel installation.
       - name: Build wheel + sdist in the CI SIF (apptainer exec)
         run: bash .github/ci/exec-in-sif.sh build-in-sif.sh 3.12
       # upload-artifact is a JS action — runs fine on the self-hosted runner.
@@ -115,6 +129,7 @@ jobs:
           path: dist/
 
   publish:
+    timeout-minutes: 30
     needs: build
     runs-on: ${{ fromJSON(vars.CI_RUNS_ON || '["self-hosted","Linux","X64","scitex-ci"]') }}
     environment:
@@ -124,10 +139,15 @@ jobs:
     # which publish-in-sif.sh uses to mint the OIDC JWT. Keep it.
     permissions:
       id-token: write
+      contents: read
     steps:
       # Need the repo checked out so .github/ci/exec-in-sif.sh +
       # publish-in-sif.sh are on disk (the build job uploaded only dist/).
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.build.outputs.version }}
+          fetch-depth: 0
+          persist-credentials: false
       - uses: actions/download-artifact@v4
         with:
           name: dist
@@ -135,12 +155,13 @@ jobs:
       # Manual OIDC trusted publishing INSIDE the SIF — pypa/gh-action-pypi-
       # publish is a Docker action and the Spartan compute nodes have no Docker.
       # publish-in-sif.sh: GitHub OIDC JWT (audience=pypi) → PyPI mint-token →
-      # twine upload dist/*. apptainer exec (no --cleanenv) passes the
-      # ACTIONS_ID_TOKEN_REQUEST_* env vars into the SIF. fail-loud at each step.
+      # twine upload dist/*. The wrapper passes only this job's ephemeral
+      # ACTIONS_ID_TOKEN_REQUEST_* context to the clean container environment.
       - name: Publish to PyPI via manual OIDC trusted publishing in the SIF
         run: bash .github/ci/exec-in-sif.sh publish-in-sif.sh 3.12
 
   release:
+    timeout-minutes: 15
     needs: [build, publish]
     runs-on: ${{ fromJSON(vars.CI_RUNS_ON || '["self-hosted","Linux","X64","scitex-ci"]') }}
     permissions:
@@ -149,6 +170,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ needs.build.outputs.version }}
+          persist-credentials: false
       - uses: actions/download-artifact@v4
         with:
           name: dist
