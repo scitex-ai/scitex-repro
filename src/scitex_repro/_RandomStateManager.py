@@ -280,7 +280,9 @@ class RandomStateManager:
                 log.error(f"   Got:      {obj_hash[:16]}...")
                 raise ValueError(f"Reproducibility verification failed for '{name}'")
             elif matches and verbose:
-                log.info(f"OK: Reproducibility verified for '{name}'")
+                slogging.getPlainConsole().emit(
+                    f"OK: Reproducibility verified for '{name}'"
+                )
 
             return matches
         else:

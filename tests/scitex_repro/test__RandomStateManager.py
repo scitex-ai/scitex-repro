@@ -14,6 +14,7 @@ import warnings
 
 import numpy as np
 import pytest
+import scitex_logging as slogging
 
 from scitex_repro import RandomStateManager, fix_seeds, get, reset
 
@@ -1119,6 +1120,163 @@ def test_construction_derives_jax_key_from_seed_when_jax_is_available():
     mgr = RandomStateManager(seed=42, verbose=False)
     # Assert
     assert bool((jax.numpy.asarray(mgr._jax_key) == jax.numpy.asarray(expected)).all())
+
+
+# ============================================================================
+# Deliberate verification confirmation output
+# ============================================================================
+
+
+@pytest.mark.parametrize("level", ["INFO", "WARNING", "ERROR"])
+@pytest.mark.parametrize("name", ["confirmation", "日本語 'confirmation'"])
+def test_verify_repeat_confirmation_is_verbatim_stdout_at_log_threshold(
+    tmp_path, capsys, level, name
+):
+    # Arrange
+    mgr = RandomStateManager(seed=42, verbose=False)
+    mgr._cache_dir = tmp_path
+    mgr.verify("confirmation-payload", name)
+    cache_before = {p.name: p.read_bytes() for p in tmp_path.iterdir()}
+    previous_level = slogging.get_level()
+    slogging.set_level(level)
+    expected_level = slogging.get_level()
+    capsys.readouterr()
+    # Act
+    try:
+        result = mgr.verify("confirmation-payload", name)
+        captured = capsys.readouterr()
+        level_after = slogging.get_level()
+    finally:
+        slogging.set_level(previous_level)
+    cache_after = {p.name: p.read_bytes() for p in tmp_path.iterdir()}
+    # Assert
+    assert (result, captured.out, captured.err, level_after, cache_after) == (
+        True,
+        f"OK: Reproducibility verified for '{name}'\n",
+        "",
+        expected_level,
+        cache_before,
+    )
+
+
+@pytest.mark.parametrize("verbose,instance_verbose", [(False, True), (False, False), (None, False), (0, True)])
+def test_verify_repeat_falsey_effective_verbose_stays_quiet(
+    tmp_path, capsys, verbose, instance_verbose
+):
+    # Arrange
+    mgr = RandomStateManager(seed=42, verbose=False)
+    mgr._cache_dir = tmp_path
+    mgr.verbose = instance_verbose
+    mgr.verify("confirmation-payload", "quiet", verbose=False)
+    capsys.readouterr()
+    # Act
+    result = mgr.verify("confirmation-payload", "quiet", verbose=verbose)
+    captured = capsys.readouterr()
+    # Assert
+    assert (result, captured.out, captured.err) == (True, "", "")
+
+
+@pytest.mark.parametrize("level", ["INFO", "WARNING", "ERROR"])
+def test_verify_none_verbose_uses_truthy_instance_confirmation(
+    tmp_path, capsys, level
+):
+    # Arrange
+    mgr = RandomStateManager(seed=42, verbose=False)
+    mgr._cache_dir = tmp_path
+    mgr.verbose = True
+    mgr.verify("confirmation-payload", "instance", verbose=False)
+    previous_level = slogging.get_level()
+    slogging.set_level(level)
+    capsys.readouterr()
+    # Act
+    try:
+        result = mgr.verify("confirmation-payload", "instance", verbose=None)
+        captured = capsys.readouterr()
+    finally:
+        slogging.set_level(previous_level)
+    # Assert
+    assert (result, captured.out, captured.err) == (
+        True, "OK: Reproducibility verified for 'instance'\n", ""
+    )
+
+
+@pytest.mark.parametrize("level", ["INFO", "WARNING", "ERROR"])
+def test_verify_first_cache_call_does_not_confirm_even_when_verbose(
+    tmp_path, capsys, level
+):
+    # Arrange
+    mgr = RandomStateManager(seed=42, verbose=False)
+    mgr._cache_dir = tmp_path
+    previous_level = slogging.get_level()
+    slogging.set_level(level)
+    capsys.readouterr()
+    # Act
+    try:
+        result = mgr.verify("confirmation-payload", "first", verbose=True)
+        captured = capsys.readouterr()
+    finally:
+        slogging.set_level(previous_level)
+    # Assert
+    assert (result, captured.out, captured.err, (tmp_path / "first.json").is_file()) == (
+        True, "", "", True
+    )
+
+
+def test_verify_falsey_verbose_mismatch_preserves_cache_and_returns_false(
+    tmp_path, capsys
+):
+    # Arrange
+    mgr = RandomStateManager(seed=42, verbose=False)
+    mgr._cache_dir = tmp_path
+    mgr.verify("original-payload", "mismatch", verbose=False)
+    cache_before = (tmp_path / "mismatch.json").read_bytes()
+    capsys.readouterr()
+    # Act
+    result = mgr.verify("different-payload", "mismatch", verbose=False)
+    captured = capsys.readouterr()
+    cache_after = (tmp_path / "mismatch.json").read_bytes()
+    # Assert
+    assert (result, captured.out, captured.err, cache_after) == (
+        False, "", "", cache_before
+    )
+
+
+@pytest.mark.parametrize("level", ["INFO", "WARNING", "ERROR"])
+def test_verify_verbose_mismatch_keeps_exception_and_stderr_diagnostics(
+    tmp_path, capsys, level
+):
+    # Arrange
+    mgr = RandomStateManager(seed=42, verbose=False)
+    mgr._cache_dir = tmp_path
+    mgr.verify("original-payload", "mismatch", verbose=False)
+    cache_before = (tmp_path / "mismatch.json").read_bytes()
+    previous_level = slogging.get_level()
+    slogging.set_level(level)
+    error_message = None
+    capsys.readouterr()
+    # Act
+    try:
+        try:
+            mgr.verify("different-payload", "mismatch", verbose=True)
+        except ValueError as error:
+            error_message = str(error)
+        captured = capsys.readouterr()
+    finally:
+        slogging.set_level(previous_level)
+    cache_after = (tmp_path / "mismatch.json").read_bytes()
+    # Assert
+    assert (
+        error_message,
+        captured.out,
+        "WARNING: Reproducibility broken for 'mismatch'!" in captured.err,
+        "Expected:" in captured.err,
+        "Got:" in captured.err,
+        "OK: Reproducibility verified" in captured.err,
+        cache_after,
+    ) == (
+        "Reproducibility verification failed for 'mismatch'", "", True, True,
+        True, False, cache_before
+    )
 
 
 if __name__ == "__main__":
