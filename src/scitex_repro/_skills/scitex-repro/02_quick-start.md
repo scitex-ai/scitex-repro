@@ -37,8 +37,12 @@ Or use the module-level singleton:
 ```python
 from scitex_repro import get, reset
 rng = get()            # lazy singleton, seed=42
-reset(seed=123)        # rebuild singleton with new seed
+rng = reset(seed=123)  # replace singleton and use the returned manager
 ```
+
+Existing references still point to the previous manager. `reset` is a module-level
+function; manager instances have no `reset()` method. To restart a local named
+stream, create a new `RandomStateManager` with the same seed.
 
 ## Unique IDs and timestamps
 

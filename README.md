@@ -32,7 +32,7 @@
 
 | # | Problem | Solution |
 |---|---------|----------|
-| 1 | **"Seed everything" takes 5+ lines** — `random` + `numpy` + `torch` (cpu+cuda) + `tensorflow` + `PYTHONHASHSEED` | **`RandomStateManager(seed=42)`** — one call seeds every framework detected in the env; `.reset()` rewinds mid-experiment |
+| 1 | **"Seed everything" takes 5+ lines** — `random` + `numpy` + `torch` (cpu+cuda) + `tensorflow` + `PYTHONHASHSEED` | **`RandomStateManager(seed=42)`** — one call seeds every framework detected in the env; recreate the manager with the same seed to restart named streams |
 | 2 | **Run directories collide** — two parallel runs overwrite each other | `gen_ID()` + `hash_array()` — unique names like `20260423_2155_abc12345`; deterministic fingerprints for integrity checks |
 
 ## Quick Start
@@ -113,10 +113,10 @@ from scitex_repro import RandomStateManager, gen_ID, hash_array
 rng = RandomStateManager(seed=42)
 data = rng("data").random(100)
 rng.verify(data, "my_data")
-rng.reset()
+rng = RandomStateManager(seed=42)  # restart named streams with the same seed
 
-# Deterministic IDs and array fingerprints
-exp_id = gen_ID()                         # "20260423_2155_abc12345"
+# Timestamped IDs and deterministic array fingerprints
+exp_id = gen_ID()                         # timestamp + random suffix
 fingerprint = hash_array(data)
 ```
 
@@ -127,6 +127,9 @@ fingerprint = hash_array(data)
 `scitex-repro` is part of [**SciTeX**](https://scitex.ai). Install via
 the umbrella with `pip install scitex[repro]` to use as
 `scitex.repro` (Python) or `scitex repro ...` (CLI).
+The umbrella supplies that CLI adapter; `pip install scitex-repro` alone provides
+the Python library, not the `scitex` command. Use `scitex repro --help` to inspect
+the umbrella's commands.
 
 >Four Freedoms for Research
 >

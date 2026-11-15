@@ -143,15 +143,12 @@ class RandomStateManager:
             self._jax_key = None
             pass
 
-        # Importing TensorFlow / PyTorch during the framework-seeding pass
-        # can consume numpy global entropy on first init (lazy variable
-        # creation, autotune probes). The first RandomStateManager(seed=N)
-        # then leaves numpy at state(seed=N + K_init); a second call leaves
-        # it at state(seed=N) because TF/torch are already imported and
-        # K_init = 0. That asymmetry breaks `np.allclose(a, b)` across two
-        # construction sites in user code (see examples/quickstart.py).
-        # Re-seeding numpy as the last step normalises the post-init state
-        # to seed=N regardless of whether frameworks were just imported.
+        # First-time framework imports can consume Python and NumPy global
+        # entropy. Normalize both streams after framework initialization so
+        # cold and warm manager construction leave the same seeded state.
+        import random as _random
+
+        _random.seed(self.seed)
         try:
             import numpy as _np
 
@@ -234,11 +231,29 @@ class RandomStateManager:
             lists, dicts, pandas dataframes, and basic types
         name : str, optional
             Cache name. Auto-generated if not provided.
+        verbose : bool or None, optional
+            Defaults to True. On a mismatch, a truthy value logs diagnostics
+            and raises ValueError. A falsey value returns False without logging.
+            None uses the manager's verbose setting.
 
         Returns
         -------
         bool
-            True if matches cache (or first call), False if different
+            True on the first cache write or a matching hash. False on a
+            mismatch only when the effective verbose setting is falsey.
+
+        Raises
+        ------
+        ValueError
+            If the hash differs and the effective verbose setting is truthy
+            (the default). The original cached hash is preserved.
+
+        Notes
+        -----
+        Behavioral controls in tests/scitex_repro/test__RandomStateManager.py:
+        test_verify_falsey_verbose_mismatch_preserves_cache_and_returns_false,
+        test_verify_verbose_mismatch_keeps_exception_and_stderr_diagnostics,
+        and test_verify_none_verbose_uses_truthy_instance_confirmation.
 
         Examples
         --------

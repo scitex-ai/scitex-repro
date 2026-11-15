@@ -7,6 +7,9 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- Fix Python random state after cold optional-framework imports so first and later
+  manager constructions start at the same seed; add a fresh-process regression.
+
 - fix: resolve RNG state under `repro/runtime/rng` per local-state-directives convention (PR #15)
 
 ## [0.1.8] — 2026-10-02
