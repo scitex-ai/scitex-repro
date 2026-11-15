@@ -234,11 +234,29 @@ class RandomStateManager:
             lists, dicts, pandas dataframes, and basic types
         name : str, optional
             Cache name. Auto-generated if not provided.
+        verbose : bool or None, optional
+            Defaults to True. On a mismatch, a truthy value logs diagnostics
+            and raises ValueError. A falsey value returns False without logging.
+            None uses the manager's verbose setting.
 
         Returns
         -------
         bool
-            True if matches cache (or first call), False if different
+            True on the first cache write or a matching hash. False on a
+            mismatch only when the effective verbose setting is falsey.
+
+        Raises
+        ------
+        ValueError
+            If the hash differs and the effective verbose setting is truthy
+            (the default). The original cached hash is preserved.
+
+        Notes
+        -----
+        Behavioral controls in tests/scitex_repro/test__RandomStateManager.py:
+        test_verify_falsey_verbose_mismatch_preserves_cache_and_returns_false,
+        test_verify_verbose_mismatch_keeps_exception_and_stderr_diagnostics,
+        and test_verify_none_verbose_uses_truthy_instance_confirmation.
 
         Examples
         --------

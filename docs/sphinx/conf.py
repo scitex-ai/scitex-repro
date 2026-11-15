@@ -1,9 +1,15 @@
 """Sphinx configuration for scitex-repro documentation."""
 
-import os
 import sys
+from pathlib import Path
 
-sys.path.insert(0, os.path.abspath("../../src"))
+try:
+    import tomllib
+except ModuleNotFoundError:  # Python 3.10; provided by the docs extra
+    import tomli as tomllib
+
+_PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(_PROJECT_ROOT / "src"))
 
 # -- Project information -----------------------------------------------------
 
@@ -11,12 +17,9 @@ project = "SciTeX Repro"
 copyright = "2024-2026, Yusuke Watanabe"
 author = "Yusuke Watanabe"
 
-try:
-    from importlib.metadata import version as _get_version
-
-    release = _get_version("scitex-repro")
-except Exception:
-    release = "0.1.0"
+# Document the selected checkout even when another release is installed.
+with (_PROJECT_ROOT / "pyproject.toml").open("rb") as _project_file:
+    release = tomllib.load(_project_file)["project"]["version"]
 
 # -- General configuration ---------------------------------------------------
 

@@ -9,6 +9,7 @@
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sphinx_autodoc_typehints.css?v=057ac668" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
@@ -361,11 +362,29 @@
 <span class="sd">            lists, dicts, pandas dataframes, and basic types</span>
 <span class="sd">        name : str, optional</span>
 <span class="sd">            Cache name. Auto-generated if not provided.</span>
+<span class="sd">        verbose : bool or None, optional</span>
+<span class="sd">            Defaults to True. On a mismatch, a truthy value logs diagnostics</span>
+<span class="sd">            and raises ValueError. A falsey value returns False without logging.</span>
+<span class="sd">            None uses the manager's verbose setting.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
-<span class="sd">            True if matches cache (or first call), False if different</span>
+<span class="sd">            True on the first cache write or a matching hash. False on a</span>
+<span class="sd">            mismatch only when the effective verbose setting is falsey.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the hash differs and the effective verbose setting is truthy</span>
+<span class="sd">            (the default). The original cached hash is preserved.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Behavioral controls in tests/scitex_repro/test__RandomStateManager.py:</span>
+<span class="sd">        test_verify_falsey_verbose_mismatch_preserves_cache_and_returns_false,</span>
+<span class="sd">        test_verify_verbose_mismatch_keeps_exception_and_stderr_diagnostics,</span>
+<span class="sd">        and test_verify_none_verbose_uses_truthy_instance_confirmation.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -407,7 +426,9 @@
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   Got:      </span><span class="si">{</span><span class="n">obj_hash</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span><span class="si">}</span><span class="s2">..."</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Reproducibility verification failed for '</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">matches</span> <span class="ow">and</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"OK: Reproducibility verified for '</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
+                <span class="n">slogging</span><span class="o">.</span><span class="n">getPlainConsole</span><span class="p">()</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"OK: Reproducibility verified for '</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">'"</span>
+                <span class="p">)</span>
 
             <span class="k">return</span> <span class="n">matches</span>
         <span class="k">else</span><span class="p">:</span>

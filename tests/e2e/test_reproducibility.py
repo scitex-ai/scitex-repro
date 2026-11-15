@@ -31,14 +31,21 @@ def test_different_seed_different_stream() -> None:
     assert bool((first == second).all()) is False
 
 
-def test_verify_caches_then_confirms() -> None:
+def test_verify_caches_then_confirms(capsys: pytest.CaptureFixture[str]) -> None:
     # Arrange
     mgr = RandomStateManager(seed=7)
     data = mgr("e2e-c").random(10)
     # Act
-    result = mgr.verify(data, "e2e-verify-cache")
+    cached = mgr.verify(data, "e2e-verify-cache")
+    confirmed = mgr.verify(data, "e2e-verify-cache")
+    captured = capsys.readouterr()
     # Assert
-    assert result is True
+    assert (cached, confirmed, captured.out, captured.err) == (
+        True,
+        True,
+        "OK: Reproducibility verified for 'e2e-verify-cache'\n",
+        "",
+    )
 
 
 def test_hash_array_stable() -> None:

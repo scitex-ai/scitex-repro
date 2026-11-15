@@ -12,6 +12,7 @@ branches MUST NOT set this — drift goes silent.
 """
 
 import shutil
+from pathlib import Path
 
 import pytest
 
@@ -28,6 +29,6 @@ def test_audit_all_clean():
     pytest.importorskip("scitex_dev")
     from scitex_dev.testing import audit_all_for_package
     # Act
-    result = audit_all_for_package("scitex-repro")
+    result = audit_all_for_package("scitex-repro", path=Path(__file__).resolve().parents[2])
     # Assert
     assert result is None or result is True
