@@ -10,6 +10,8 @@ discipline (see scitex general skills 02_package_12_no-mocks.md and
 """
 
 import random
+import subprocess
+import sys
 import warnings
 
 import numpy as np
@@ -99,6 +101,30 @@ def test_construction_seeds_python_random_for_reproducibility():
     val2 = random.random()
     # Assert
     assert val1 == val2
+
+
+def test_cold_construction_normalizes_python_random_after_framework_imports():
+    # Arrange — a fresh process prevents test collection or order warming ML imports.
+    script = """
+import random
+from scitex_repro import RandomStateManager
+
+expected = random.Random(42).random()
+RandomStateManager(seed=42)
+first = random.random()
+RandomStateManager(seed=42)
+second = random.random()
+assert (first, second) == (expected, expected), (first, second, expected)
+"""
+    # Act
+    result = subprocess.run(
+        [sys.executable, "-c", script],
+        capture_output=True,
+        text=True,
+        timeout=120,
+    )
+    # Assert
+    assert result.returncode == 0, result.stdout + result.stderr
 
 
 def test_construction_seeds_numpy_random_for_reproducibility():
